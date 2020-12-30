@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include<conio.h>
 
 typedef struct Book {
@@ -36,6 +37,7 @@ void ViewBooks(){
 		printf("------------------------------------------------------------------------------------------------\n");
 
 	}
+	fclose(fp);
 
 }
 
@@ -72,33 +74,33 @@ void RemoveBooks(){
     Book b;
     char bookid[10];
     char choice;
+    int flag=0;
     printf("\nEnter the book Id : ");
     scanf("%s",bookid);
 
-    FILE *fp;
+    FILE *fp,*fp1;
 	fp = fopen("Books","r+");
 	if(fp==NULL){
 		printf("\nError in Opening File\n");
 		exit(0);
 	}
 	else{
-        int flag=0;
 		while(fscanf(fp,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
             if(strcmp(b.bookid,bookid)==0){
                 flag=1;
                 break;
             }
 		}
-		if(flag==0){
+	}
+    rewind(fp);
+	if(flag==0){
             printf("\nRecord Not Found!\n");
-		}else{
+    }else{
 		    printf("\nBook Found !!\n");
-		    printf("\nDo you want to Remove the %s Book (Y/N) : ",b.name);
+		    printf("\nDo you want to Remove the Book with Book ID %s (Y/N) : ",b.bookid);
 		    scanf("%c",&choice);
 		    scanf("%c",&choice);
 		    if(choice == 'Y' || choice == 'y'){
-            rewind(fp);
-            FILE *fp1;
             fp1=fopen("temp","w");
             if(fp1==NULL){
                 printf("\nError in Opening File\n");
@@ -109,21 +111,17 @@ void RemoveBooks(){
                          fprintf(fp1,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
                     }
                 }
-                fclose(fp);
-                fclose(fp1);
-                remove("Books");
-                rename("temp","Books");
-
-                printf("\nBook removed Successfully\n");
             }
+            fclose(fp);
+            fclose(fp1);
+            remove("Books");
+            rename("temp","Books");
+            printf("\nBook removed Successfully\n");
 
 		    }else{
                 return;
 		    }
 		}
-
-
-	}
 
 
 }
@@ -145,6 +143,7 @@ void DisplayRecords(char USN[20]){
 
 		}
 	}
+	fclose(fp);
 
 }
 

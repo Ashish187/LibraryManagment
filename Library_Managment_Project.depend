@@ -1,6 +1,7 @@
 # depslib dependency file v1.0
-1609315813 source:d:\codeblocks\library_managment_project\main.c
+1609354024 source:d:\codeblocks\library_managment_project\main.c
 	<stdio.h>
 	<stdlib.h>
+	<string.h>
 	<conio.h>
 
