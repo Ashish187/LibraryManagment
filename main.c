@@ -42,7 +42,6 @@ void ViewBooks(){
 }
 
 void AddBooks(){
-    system("clear");
 	Book b;
 	printf("\n\nEnter the name of Book : ");
 	scanf("%s",b.name);
