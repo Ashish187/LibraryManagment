@@ -16,7 +16,7 @@ typedef struct Book {
 typedef struct IssuedBook {
 	char name[20];
 	char USN[20];
-	int bookid;
+	char bookid[10];
 	char issueDate[20];
 }IssuedBook;
 
@@ -128,24 +128,93 @@ void RemoveBooks(){
 
 }
 void IssueBooks(){
-   	IssuedBook b;
-	FILE *fp;
+    Book b;
+   	IssuedBook b1;
+   	char usn[20];
+   	char bookid[10];
+   	int flag=0;
+   	int max=0;
+   	int count;
+	FILE *fp,*fp1,*fp2;
 	printf("\nEnter Book Id : ");
+	scanf("%s",bookid);
 
-	fp = fopen("Issued","a");
+	fp = fopen("Books","r+");
 	if(fp==NULL){
 		printf("\nError in Opening File\n");
 		exit(0);
 	}
 	else{
-
-		while(fscanf(fp,"%s%s%d%s",b.name,b.USN,&b.bookid,b.issueDate)!=EOF){
-
+        rewind(fp);
+		while(fscanf(fp,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
+            if(strcmp(bookid,b.bookid)==0){
+                    flag=1;
+                    break;
+            }
 		}
+		if(flag==1){
+            fp2= fopen("temp1","a+");
+            rewind(fp);
+            while(fscanf(fp,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
+            if(strcmp(bookid,b.bookid)==0){
+                if(b.quantity > 0){
+                fp1=fopen("Issued","a+");
+                if(fp1==NULL){
+                    printf("\nError in Opening File\n");
+                    exit(0);
+                }else{
+                    rewind(fp1);
+                    printf("\nEnter the USN : ");
+                    scanf("%s",usn);
+                    count=0;
+                    while(fscanf(fp1,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
+                        if(strcmp(usn,b1.USN)==0){
+                            count++;
+                        }
+                    }
+                    if(count<5){
+                        printf("\nEnter the Name of Student : ")  ;
+                        scanf("%s",b1.name);
+                        strcpy(b1.USN,usn);
+                        strcpy(b1.bookid,bookid);
+                        strcpy(b1.issueDate,"12/12/20");
+                        fprintf(fp1,"%s\t%s\t%s\t%s\n",b1.name,b1.USN,b1.bookid,b1.issueDate);
+                        fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity-1,b.issued+1);
+                        printf("\nBook Issued Successfully!!");
+
+
+
+                    }else{
+                       printf("\nYou have already issued 5 Books\n.");
+                       max=1;
+                       break;
+                    }
+                    fclose(fp1);
+                }
+            }else{
+                printf("\nBook %s with book ID %s is not available right now.",b.name,b.bookid);
+            }
+		}else{
+            fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
+		}
+
 	}
 	fclose(fp);
+	fclose(fp2);
+	if(max==0){
+      remove("Books");
+      rename("temp1","Books");
+	}else{
+        remove("temp1");
+	}
 
 
+
+    }else{
+       printf("\nBook Not Found !!!");
+    }
+
+}
 }
 
 void DisplayRecords(char USN[20]){
@@ -158,7 +227,7 @@ void DisplayRecords(char USN[20]){
 	}
 	else{
 
-		while(fscanf(fp,"%s%s%d%s",b.name,b.USN,&b.bookid,b.issueDate)!=EOF){
+		while(fscanf(fp,"%s%s%s%s",b.name,b.USN,b.bookid,b.issueDate)!=EOF){
 
 		}
 	}
@@ -170,12 +239,14 @@ void DisplayRecords(char USN[20]){
 
 void displayStudentOption(){
     while(1){
+    printf("\n===========================");
 	printf("\nSelect from the options \n");
 	char USN[20];
 	int choice;
 	printf("\n1.View Record of Issued Book\n2.View Avaliable Book\n3.Go Back");
 	printf("\nEnter the Choice : ");
-        scanf("%d",&choice);
+    scanf("%d",&choice);
+    printf("===========================");
 	switch(choice){
 
 		case 1:printf("\nEnter USN : ");
@@ -197,12 +268,14 @@ void displayStudentOption(){
 }
 
 void displayLibrarianOption(){
+    printf("\n===========================");
 	int choice;
     while(1){
 	printf("\nSelect from the options \n");
 	printf("\n1.Add Books\n2.Remove Book\n3.Issue Book\n4.View Book List\n5.Go Back");
 	printf("\nEnter the Choice : ");
-        scanf("%d",&choice);
+    scanf("%d",&choice);
+    printf("===========================\n");
 	switch(choice){
 
 		case 1:AddBooks();
