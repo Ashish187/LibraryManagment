@@ -26,7 +26,7 @@ typedef struct IssuedBook {
 void ViewBooks(){
     Book b;
     FILE *fp;
-	fp = fopen("Books","r");
+	fp = fopen("Books","a+");
 	if(fp==NULL){
 		printf(" \n Error in Opening File\n");
 		exit(0);
@@ -133,7 +133,8 @@ void IssueBooks(){
    	char bookid[10];
    	int flag=0;
    	int max=0;
-   	int count;
+   	int countissued=0;
+   	int count = -1;
 	FILE *fp,*fp1,*fp2;
 	printf(" \n Enter Book Id : ");
 	scanf("%s",bookid);
@@ -169,9 +170,14 @@ void IssueBooks(){
                     while(fscanf(fp1,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
                         if(strcmp(usn,b1.USN)==0){
                             count++;
+                            if(strcmp(bookid,b1.bookid)==0){
+                                countissued++;
+                            }
                         }
+
                     }
-                    if(count<5){
+                    if(count< 5 && count>=0 ){
+                        if(countissued == 0){
                         printf(" \n Enter the Name of Student : ")  ;
                         scanf("%s",b1.name);
                         strcpy(b1.USN,usn);
@@ -180,6 +186,10 @@ void IssueBooks(){
                         fprintf(fp1,"%s\t%s\t%s\t%s\n",b1.name,b1.USN,b1.bookid,b1.issueDate);
                         fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity-1,b.issued+1);
                         printf(" \n Book Issued Successfully!!");
+                        }else{
+                            printf("\n Student has already Issued this Book.\n");
+                            fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
+                        }
 
 
 
@@ -188,16 +198,21 @@ void IssueBooks(){
                        max=1;
                        break;
                     }
-                    fclose(fp1);
+
                 }
             }else{
                 printf(" \n Book %s with book ID %s is not available right now.",b.name,b.bookid);
+                fclose(fp);
+                fclose(fp2);
+                remove("temp1");
+                return;
             }
 		}else{
             fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
 		}
 
 	}
+    fclose(fp1);
 	fclose(fp);
 	fclose(fp2);
 	if(max==0){
@@ -242,7 +257,7 @@ void ReturnBook(){
         scanf("%c",&choice);
         scanf("%c",&choice);
         if(choice =='y'|| choice=='Y'){
-             fp2=fopen("temp1","a+")   ;
+             fp2=fopen("temp1","a+");
              fp3=fopen("Books","a+");
              fp1=fopen("temp","a+");
              rewind(fp);
