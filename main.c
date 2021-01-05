@@ -66,7 +66,6 @@ void AddBooks(){
         fprintf(fp,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
         printf(" \n Book %s has been added successfully.\n",b.name);
         fclose(fp);
-
         return;
     }
 }
@@ -102,7 +101,7 @@ void RemoveBooks(){
 		    scanf("%c",&choice);
 		    scanf("%c",&choice);
 		    if(choice == 'Y' || choice == 'y'){
-            fp1=fopen("temp","w");
+            fp1=fopen("temp","w+");
             if(fp1==NULL){
                 printf(" \n Error in Opening File\n");
 		        exit(0);
@@ -202,10 +201,8 @@ void IssueBooks(){
                 }
             }else{
                 printf(" \n Book %s with book ID %s is not available right now.",b.name,b.bookid);
-                fclose(fp);
-                fclose(fp2);
-                remove("temp1");
-                return;
+                break;
+                //bug is here
             }
 		}else{
             fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
@@ -226,6 +223,7 @@ void IssueBooks(){
 
     }else{
        printf(" \n Book Not Found !!!");
+       fclose(fp);
     }
 
 }
@@ -257,9 +255,9 @@ void ReturnBook(){
         scanf("%c",&choice);
         scanf("%c",&choice);
         if(choice =='y'|| choice=='Y'){
-             fp2=fopen("temp1","a+");
+             fp2=fopen("temp1","w+");
              fp3=fopen("Books","a+");
-             fp1=fopen("temp","a+");
+             fp1=fopen("temp","w+");
              rewind(fp);
              while(fscanf(fp,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
                 if(strcmp(USN,b1.USN)==0){
@@ -320,10 +318,9 @@ void DisplayRecords(char USN[20]){
         printf(" \n Printing the records of Book Issued by Student with USN %s ",USN);
         printf(" \n\n--------------------------------------------------------------------\n BookName\t\tAuthor\t\tBookID\t\tIssueDate\n--------------------------------------------------------------------\n");
         rewind(fp);
+        fp1=fopen("Books","r");
 		while(fscanf(fp,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
                 if(strcmp(USN,b1.USN)==0){
-                    flag=1;
-                    fp1=fopen("Books","r");
                     while(fscanf(fp1,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
                         if(strcmp(b1.bookid,b.bookid)==0){
                            break;
@@ -333,14 +330,15 @@ void DisplayRecords(char USN[20]){
                 }
 	    }
 	    printf("--------------------------------------------------------------------\n");
+	    fclose(fp1);
+	    fclose(fp);
 
 	}else{
         printf(" \n No any Record Found !!!\n");
+        fclose(fp);
         return;
 	 }
 }
-	fclose(fp);
-	fclose(fp1);
 
 }
 
