@@ -1,12 +1,12 @@
 # depslib dependency file v1.0
-1609384114 source:d:\codeblocks\library_managment_project\main.c
+1609849484 source:d:\codeblocks\library_managment_project\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<conio.h>
 	<dos.h>
 
-1609783698 source:c:\users\ashish anand\desktop\librarymanagment\main.c
+1609850186 source:c:\users\ashish anand\desktop\librarymanagment\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
