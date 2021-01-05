@@ -32,7 +32,7 @@ void ViewBooks(){
 		exit(0);
 	}
 	else{
-        printf(" \n NAME\t\tBOOK ID\t\tAUTHOR\t\tDEPT\t\tQUANT\t\tISSUED\n ------------------------------------------------------------------------------------------------\n");
+        printf(" \n ------------------------------------------------------------------------------------------------\n NAME\t\tBOOK ID\t\tAUTHOR\t\tDEPT\t\tQUANT\t\tISSUED\n ------------------------------------------------------------------------------------------------\n");
 		while(fscanf(fp,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
             printf(" %s\t\t%s\t\t%s\t\t%s\t\t%d\t\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
 		}
@@ -216,7 +216,70 @@ void IssueBooks(){
 }
 }
 
-void ReturnBook(char USN[20]){
+void ReturnBook(){
+    char USN[20];
+    IssuedBook b1;
+    Book b;
+    printf("\n Enter the USN : ");
+    scanf("%s",USN);
+    char choice;
+    char bookid[10];
+    int flag=0,flag1=0;
+    FILE *fp,*fp1,*fp2,*fp3;
+    fp=fopen("Issued","r+");
+    printf("\n Enter the Book ID : ");
+    scanf("%s",bookid);
+    while(fscanf(fp,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
+                if(strcmp(USN,b1.USN)==0){
+                    if(strcmp(bookid,b1.bookid)==0){
+                        flag=1;
+                        break;
+                    }
+                }
+    }
+    if(flag==1){
+        printf("\n Enter Y if you want to return : ");
+        scanf("%c",&choice);
+        scanf("%c",&choice);
+        if(choice =='y'|| choice=='Y'){
+             fp2=fopen("temp1","a+")   ;
+             fp3=fopen("Books","a+");
+             fp1=fopen("temp","a+");
+             rewind(fp);
+             while(fscanf(fp,"%s%s%s%s",b1.name,b1.USN,b1.bookid,b1.issueDate)!=EOF){
+                if(strcmp(USN,b1.USN)==0){
+                    if(strcmp(bookid,b1.bookid)!=0){
+                       fprintf(fp1,"%s\t%s\t%s\t%s\n",b1.name,b1.USN,b1.bookid,b1.issueDate);
+                    }
+
+                }else{
+                    fprintf(fp1,"%s\t%s\t%s\t%s\n",b1.name,b1.USN,b1.bookid,b1.issueDate);
+                }
+        }
+        fclose(fp);
+        fclose(fp1);
+
+        while(fscanf(fp3,"%s%s%s%s%d%d",b.name,b.bookid,b.author,b.dept,&b.quantity,&b.issued)!=EOF){
+            if(strcmp(bookid,b.bookid)==0){
+                fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity+1,b.issued-1);
+            }else{
+              fprintf(fp2,"%s\t%s\t%s\t%s\t%d\t%d\n",b.name,b.bookid,b.author,b.dept,b.quantity,b.issued);
+            }
+        }
+        fclose(fp3);
+        fclose(fp2);
+        remove("Books");
+        rename("temp1","Books");
+        remove("Issued");
+        rename("temp","Issued");
+        printf("\n Successfully Returned Book with BookID %s\n-----------------------------------------------.",bookid);
+    }else{
+        return;
+    }
+    }else{
+        printf("\n No Book with BookId %s was issued to %s",bookid,USN);
+        return;
+    }
 
 
 }
@@ -254,6 +317,7 @@ void DisplayRecords(char USN[20]){
                      printf(" %s\t\t%s\t\t%s\t\t%s\n",b.name,b.author,b1.bookid,b1.issueDate);
                 }
 	    }
+	    printf("--------------------------------------------------------------------\n");
 
 	}else{
         printf(" \n No any Record Found !!!\n");
@@ -269,19 +333,19 @@ void DisplayRecords(char USN[20]){
 
 void displayStudentOption(){
     while(1){
-    printf(" \n ===========================");
+    printf(" \n -----------------------------");
 	printf(" \n Select from the options \n");
 	char USN[20];
 	int choice;
 	printf(" \n 1.View Record of Issued Book\n 2.View Avaliable Book\n 3.Go Back");
 	printf(" \n Enter the Choice : ");
     scanf("%d",&choice);
-    printf(" ===========================\n");
+    printf(" -----------------------------\n");
 	switch(choice){
 
 		case 1:printf(" \n Enter USN : ");
 		       scanf("%s",USN);
-		       printf(" \n Searching Records of Student With USN - %s\n\n",USN);
+		       printf(" \n Searching Records of Student With USN - %s\n",USN);
 		       DisplayRecords(USN);
 			break;
 		case 2:ViewBooks();
@@ -298,14 +362,15 @@ void displayStudentOption(){
 }
 
 void displayLibrarianOption(){
-    printf(" \n ===========================");
+
 	int choice;
     while(1){
+    printf(" \n -----------------------------");
 	printf(" \n Select from the options \n");
-	printf(" \n 1.Add Books\n 2.Remove Book\n 3.Issue Book\n 4.View Book List\n 5.Go Back");
+	printf(" \n 1.Add Books\n 2.Remove Book\n 3.Issue Book\n 4.Return Book\n 5.View Book List\n 6.Go Back");
 	printf(" \n Enter the Choice : ");
     scanf("%d",&choice);
-    printf(" ===========================\n");
+    printf(" -----------------------------\n");
 	switch(choice){
 
 		case 1:AddBooks();
@@ -314,9 +379,11 @@ void displayLibrarianOption(){
 			   break;
 		case 3:	IssueBooks();
 		        break;
-		case 4:ViewBooks();
+		case 4:	ReturnBook();
+		        break;
+		case 5:ViewBooks();
                 break;
-		case 5:return;
+		case 6:return;
 		default:printf(" \n Invalid Option\n");
 
 	}
@@ -332,7 +399,7 @@ void displayLibrarianOption(){
 
 int main(){
 	int choice;
-	printf(" ================================================LIBRARY MANAGMENT================================================\n\n");
+	printf("                                LIBRARY MANAGMENT\n\n");
 	while(1){
 	printf("\n Select From the Options \n\n 1.Student\n 2.Librarian\n 3.Exit\n\n");
 
