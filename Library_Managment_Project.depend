@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1609792856 source:d:\codeblocks\library_managment_project\main.c
+1609831246 source:d:\codeblocks\library_managment_project\main.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
