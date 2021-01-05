@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<conio.h>
+#include <dos.h>
 
 typedef struct Book {
 	char name[20];
@@ -18,6 +19,8 @@ typedef struct IssuedBook {
 	int bookid;
 	char issueDate[20];
 }IssuedBook;
+
+
 
 
 void ViewBooks(){
@@ -125,6 +128,23 @@ void RemoveBooks(){
 
 }
 void IssueBooks(){
+   	IssuedBook b;
+	FILE *fp;
+	printf("\nEnter Book Id : ");
+
+	fp = fopen("Issued","a");
+	if(fp==NULL){
+		printf("\nError in Opening File\n");
+		exit(0);
+	}
+	else{
+
+		while(fscanf(fp,"%s%s%d%s",b.name,b.USN,&b.bookid,b.issueDate)!=EOF){
+
+		}
+	}
+	fclose(fp);
+
 
 }
 
@@ -209,7 +229,7 @@ void displayLibrarianOption(){
 
 int main(){
 	int choice;
-	printf("+++++++++++++++++++++++++++++++++++++++++++++LIBRARY MANAGMENT+++++++++++++++++++++++++++++++++++++++++++++\n\n");
+	printf("================================================LIBRARY MANAGMENT================================================\n\n");
 	while(1){
 	printf("\nSelect From the Options \n\n1.Student\n2.Librarian\n3.Exit\n\n");
 
@@ -233,6 +253,3 @@ int main(){
 
 return 0;
 }
-
-
-
