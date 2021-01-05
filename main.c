@@ -399,7 +399,7 @@ void displayLibrarianOption(){
 
 int main(){
 	int choice;
-	printf("                                LIBRARY MANAGMENT\n\n");
+	printf("----------------------------------LIBRARY MANAGMENT--------------------------------\n\n");
 	while(1){
 	printf("\n Select From the Options \n\n 1.Student\n 2.Librarian\n 3.Exit\n\n");
 
